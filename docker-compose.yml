@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: firaga
+      POSTGRES_USER: firaga
+      POSTGRES_PASSWORD: firaga
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U firaga']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  maildev:
+    image: maildev/maildev
+    ports:
+      - '1080:1080'   # web inbox — open this in your browser
+      - '1025:1025'   # SMTP — point your app here in dev
+    environment:
+      - MAILDEV_SMTP_PORT=1025
+      - MAILDEV_WEB_PORT=1080
+
+volumes:
+  postgres_data:
